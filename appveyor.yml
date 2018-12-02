@@ -1,0 +1,8 @@
+shallow_clone: true
+
+platform:
+- x86
+- x64
+
+build_script:
+- echo %PLATFORM%
