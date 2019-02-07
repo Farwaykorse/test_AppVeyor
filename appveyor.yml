@@ -30,9 +30,7 @@ install:
         Write-Warning "OpenCppCoverage download hash changed!"
         Write-Output "$hash"
       }
-- ps: $command = ".\${FileName} /SILENT /SP- /DIR='${OCppCov_PATH}'"
-- ps: Write-Output $command
-- ps: $command | Invoke-Expression
+- ps: Start-Process ".\$Filename" -ArgumentList "/verysilent /dir=`"${OCppCov_PATH}`"" -Wait
 - ps: Write-Output 'Installing ... done'
 - ps: |
     if (![IO.File]::Exists("${OCppCov_PATH}\OpenCppCoverage.exe")) {
