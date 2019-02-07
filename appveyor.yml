@@ -1,8 +1,48 @@
 shallow_clone: true
 
 platform:
-- x86
 - x64
+
+install:
+- ps: $OCppCov_TAG = 'release-0.9.7.0'
+- ps: $OCppCov_PATH = 'C:\Tools\OpenCppCoverage'
+- ps: $OCppCov_SHA512 = '40BEDAFC9B819B90C5FB08CE222D109B9B88E7F0BBCE6E5F8543C1A595270FCB1479F8B385B04D3D251213375A44ADCA7EA7992C03867D4ED67925D959CE192C'
+
+- ps: |
+    Write-Output "-- Install OpenCppCoverage ${OCppCov_TAG} ..."
+    $FileName = ('OpenCppCoverageSetup-x64-',
+      ("${OCppCov_TAG}.exe") -replace 'release-','') -join ''
+- ps: |
+    $URL = 'https://github.com/OpenCppCoverage/OpenCppCoverage/releases' `
+      +"/download/${OCppCov_TAG}/${FileName}"
+    if (![IO.File]::Exists("${OCppCov_PATH}\OpenCppCoverage.exe")) {
+      Write-Output '-- downloading file ...'
+      Start-FileDownload "${URL}"
+      Write-Output '-- downloading file ... done'
+    }
+- ps: ls
+- ps: |
+      $hash = (Get-FileHash ${FileName} -Algorithm SHA512).Hash
+- ps: |
+      if ($OCppCov_SHA512 -eq $hash) {
+        Write-Output 'Installing ...'
+      } else {
+        Write-Warning "OpenCppCoverage download hash changed!"
+        Write-Output "$hash"
+      }
+- ps: $command = ".\${FileName} /SILENT /SP- /DIR='${OCppCov_PATH}'"
+- ps: Write-Output $command
+- ps: $command | Invoke-Expression
+- ps: Write-Output 'Installing ... done'
+- ps: |
+    if (![IO.File]::Exists("${OCppCov_PATH}\OpenCppCoverage.exe")) {
+      Write-Warning "Failed to find OpenCppCoverage.exe in expected location."
+      ls C:\Tools
+      ls $OCppCov_PATH
+    } else {
+      Write-Output "-- Install OpenCppCoverage ${OCppCov_TAG} ... done"
+    }
+- ps: OpenCppCoverage.exe --help
 
 build_script:
 - echo %PLATFORM%
