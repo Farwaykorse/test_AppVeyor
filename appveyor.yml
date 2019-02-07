@@ -35,9 +35,8 @@ install:
 - ps: |
     if (![IO.File]::Exists("${OCppCov_PATH}\OpenCppCoverage.exe")) {
       Write-Warning "Failed to find OpenCppCoverage.exe in expected location."
-      ls C:\Tools
-      ls $OCppCov_PATH
     } else {
+      $env:PATH = "$OCppCov_PATH;$env:PATH"
       Write-Output "-- Install OpenCppCoverage ${OCppCov_TAG} ... done"
     }
 - ps: OpenCppCoverage.exe --help
